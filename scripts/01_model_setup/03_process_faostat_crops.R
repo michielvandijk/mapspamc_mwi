@@ -1,15 +1,14 @@
-#'========================================================================================================================================
-#' Project:  mapspamc_mwi
+#'========================================================================================
+#' Project:  MAPSPAMC
 #' Subject:  Script to process FAOSTAT crops data
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
-#'========================================================================================================================================
+#'========================================================================================
 
-############### SOURCE PARAMETERS ###############
+# SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
-
-############### LOAD DATA ###############
+# LOAD DATA ------------------------------------------------------------------------------
 # Set FAOSTAT version
 faostat_crops_version <- "20200303"
 
@@ -21,7 +20,7 @@ prod <- read_csv(file.path(param$raw_path,
 load_data("faostat2crop", param)
 
 
-############### PROCESS ###############
+# PROCESS --------------------------------------------------------------------------------
 # faostat2crop
 faostat2crop <- faostat2crop %>%
   dplyr::select(crop, faostat_crop_code) %>%
@@ -35,7 +34,8 @@ area <- prod %>%
   filter(!is.na(value)) %>%
   na.omit() %>%# remove rows with na values for value
   group_by(crop, unit, year) %>%
-  summarize(value = sum(value, na.rm = T)) %>%
+  summarize(value = sum(value, na.rm = T),
+            .groups = "drop") %>%
   ungroup() %>%
   mutate(source = "FAOSTAT",
          adm_level = 0,
@@ -45,12 +45,11 @@ summary(area)
 str(area)
 
 
-########## SAVE ##########
+# SAVE -----------------------------------------------------------------------------------
 write_csv(area, file.path(param$spam_path,
   glue("processed_data/agricultural_statistics/faostat_crops_{param$year}_{param$iso3c}.csv")))
 
-
-########## CREATE FAOSTAT CROP LIST ##########
+# CREATE FAOSTAT CROP LIST ---------------------------------------------------------------
 faostat_crop_list <- area %>%
   dplyr::select(source, adm_code, adm_name, crop) %>%
   unique() %>%
@@ -59,7 +58,6 @@ faostat_crop_list <- area %>%
 write_csv(faostat_crop_list, file.path(param$spam_path,
   glue("processed_data/lists/faostat_crop_list_{param$year}_{param$iso3c}.csv")))
 
-
-########## CLEAN UP ##########
+# CLEAN UP -------------------------------------------------------------------------------
 rm(area, faostat_crop_list, faostat2crop, prod, faostat_crops_version)
 

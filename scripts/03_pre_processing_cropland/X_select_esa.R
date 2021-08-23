@@ -1,5 +1,5 @@
 #'========================================================================================================================================
-#' Project:  mapspam2globiom
+#' Project:  mapspamc
 #' Subject:  Code to select ESA land cover map per country
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
@@ -24,9 +24,10 @@ output <- file.path(param$spam_path,
 
 # Warp and mask
 output_map <- gdalwarp(srcfile = input, dstfile = output,
-                            cutline = mask, crop_to_cutline = T, srcnodata = "0",
-                            r = "near", verbose = F, output_Raster = T, overwrite = T)
-plot(output_map)
+                       cutline = mask, crop_to_cutline = T, srcnodata = "0",
+                       r = "near", overwrite = T)
+
+plot(raster(output_map))
 
 
 ############### CLEAN UP ###############

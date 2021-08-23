@@ -1,15 +1,15 @@
-#'========================================================================================================================================
-#' Project:  globiom2mapspam
+#'========================================================================================
+#' Project:  MAPSPAMC
 #' Subject:  Script to process FAOSTAT price data
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
-#'========================================================================================================================================
+#'========================================================================================
 
-############### SOURCE PARAMETERS ###############
+# SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 
-############### LOAD DATA ###############
+# LOAD DATA ------------------------------------------------------------------------------
 # Set FAOSTAT versions
 faostat_crops_version <- "20200303"
 faostat_prices_version <- "20200303"
@@ -27,7 +27,7 @@ faostat2crop <- faostat2crop %>%
   na.omit()
 
 
-############### PROCESS ###############
+# PROCESS --------------------------------------------------------------------------------
 # Clean up FAOSTAT
 price <- price_raw %>%
   setNames(tolower(names(.))) %>%
@@ -56,7 +56,7 @@ price_iso3c <- full_join(price, area) %>%
   filter(year %in% c(param$year-1, param$year, param$year+1)) %>%
   mutate(continent = countrycode(iso3c, "iso3c", "continent"),
          region = countrycode(iso3c, "iso3c", "region")) %>%
-  group_by(crop, continent) %>% 
+  group_by(crop, continent) %>%
   summarize(price = mean(price, na.rm = T)) %>%
   ungroup()
 
@@ -75,11 +75,11 @@ miss_crop <- full_join(crop_list, price_iso3c) %>%
   filter(is.na(price))
 
 
-########## SAVE ##########
-write_csv(price_iso3c, file.path(param$spam_path, 
+# SAVE -----------------------------------------------------------------------------------
+write_csv(price_iso3c, file.path(param$spam_path,
   glue("processed_data/agricultural_statistics/crop_prices_{param$year}_{param$iso3c}.csv")))
 
 
-########## CLEAN UP ##########
+# CLEAN UP -------------------------------------------------------------------------------
 rm(area, crop_list, faostat2crop, miss_crop, price, price_iso3c, price_raw,
    prod_raw, faostat_crops_version, faostat_prices_version)

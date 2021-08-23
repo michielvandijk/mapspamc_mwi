@@ -1,26 +1,26 @@
-#'========================================================================================================================================
-#' Project:  mapspamc
+#'========================================================================================
+#' Project:  MAPSPAMC
 #' Subject:  Process adm shapefile
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
-#'========================================================================================================================================
+#'========================================================================================
 
-############### SOURCE PARAMETERS ###############
+# SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 
-############### LOAD DATA ###############
+# LOAD DATA ------------------------------------------------------------------------------
 # replace the name of the shapefile with that of your own country.
 iso3c_shp <- "adm_2010_MWI.shp"
 
 # load shapefile
-adm_map_raw <- read_sf(file.path(param$raw_path, glue("adm/{iso3c_shp}")))
+adm_map_raw <- read_sf(file.path(param$raw_path, glue("adm/{param$iso3c}/{iso3c_shp}")))
 
 # plot
 plot(adm_map_raw$geometry)
 
 
-############### PROCESS ###############
+# PROCESS --------------------------------------------------------------------------------
 # Project to standard global projection
 adm_map <- adm_map_raw %>%
   st_transform(param$crs)
@@ -62,7 +62,8 @@ names(adm_map)
 # Union separate polygons that belong to the same adm
 adm_map <- adm_map %>%
   group_by(adm0_name, adm0_code, adm1_name, adm1_code, adm2_name, adm2_code) %>%
-  summarize() %>%
+  summarize(geometry = st_union(geometry),
+            .groups = "drop") %>%
   ungroup() %>%
   mutate(adm0_name = param$country,
          adm0_code = param$iso3c)
@@ -90,8 +91,7 @@ par(mfrow=c(1,1))
 create_adm_list(adm_map, param)
 
 
-############### SAVE ###############
-# Save adm maps
+# SAVE -----------------------------------------------------------------------------------
 temp_path <- file.path(param$spam_path, glue("processed_data/maps/adm/{param$res}"))
 dir.create(temp_path, showWarnings = FALSE, recursive = TRUE)
 
@@ -99,20 +99,20 @@ saveRDS(adm_map, file.path(temp_path, glue("adm_map_{param$year}_{param$iso3c}.r
 write_sf(adm_map, file.path(temp_path, glue("adm_map_{param$year}_{param$iso3c}.shp")))
 
 
-############### CREATE PDF ###############
+# CREATE PDF -----------------------------------------------------------------------------
 # Create pdf with the location of administrative units
 create_adm_map_pdf(param)
 
 
-############### CREATE GRID ###############
+# CREATE GRID ----------------------------------------------------------------------------
 create_grid(param)
 
 
-############### RASTERIZE ADM_MAP ###############
+# RASTERIZE ADM_MAP ----------------------------------------------------------------------
 rasterize_adm_map(param)
 
 
-############### CLEAN UP ###############
+# CLEAN UP -------------------------------------------------------------------------------
 rm(adm_map, adm_map_raw, iso3c_shp, temp_path)
 rm(list = ls()[grep("code_orig", ls())])
 rm(list = ls()[grep("name_orig", ls())])

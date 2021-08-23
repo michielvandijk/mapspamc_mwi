@@ -1,26 +1,26 @@
-#'========================================================================================================================================
-#' Project:  mapspamc
-#' Subject:  Script to check and calibrate subnational statistics
+#'========================================================================================
+#' Project:  MAPSPAMC
+#' Subject:  Process adm shapefile
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
-#'========================================================================================================================================
+#'========================================================================================
 
-############### SOURCE PARAMETERS ###############
+# SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 
-############### LOAD DATA ###############
+# LOAD DATA ------------------------------------------------------------------------------
 # harvest area statistics
 ha_df_raw <- read_csv(file.path(param$raw_path,
-  glue("subnational_statistics/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
+  glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
 
 # Farming systems shares
 fs_df_raw <- read_csv(file.path(param$raw_path,
-  glue("subnational_statistics/farming_system_shares_{param$year}_{param$iso3c}.csv")))
+  glue("subnational_statistics/{param$iso3c}/farming_system_shares_{param$year}_{param$iso3c}.csv")))
 
 # Cropping intensity
 ci_df_raw <- read_csv(file.path(param$raw_path,
-  glue("subnational_statistics/cropping_intensity_{param$year}_{param$iso3c}.csv")))
+  glue("subnational_statistics/{param$iso3c}/cropping_intensity_{param$year}_{param$iso3c}.csv")))
 
 # adm_list
 load_data("adm_list", param)
@@ -30,10 +30,10 @@ fao_raw <- read_csv(file.path(param$spam_path,
   glue("processed_data/agricultural_statistics/faostat_crops_{param$year}_{param$iso3c}.csv")))
 
 
-############### PROCESS HA STATISTICS ###############
+# PROCESS HA STATISTICS ----------------------------------------------------------------
 # wide to long format
 ha_df <- ha_df_raw %>%
-  gather(crop, ha, -adm_name, -adm_code, -adm_level)
+  pivot_longer(-c(adm_name, adm_code, adm_level), names_to = "crop", values_to = "ha")
 
 # Convert -999 and empty string values to NA
 ha_df <- ha_df %>%
@@ -69,14 +69,14 @@ ha_df <- reaggregate_statistics(ha_df, param)
 # Check again
 check_statistics(ha_df, param, out = T)
 
-
-########## HARMONIZE HA WITH FAOSTAT ##########
+# HARMONIZE HA WITH FAOSTAT -------------------------------------------------------------
 # Compare with FAO
 # Process fao
 fao <- fao_raw %>%
   filter(year %in% c((param$year-1): (param$year+1))) %>%
   group_by(crop) %>%
-  summarize(ha = mean(value, na.rm = T)) %>%
+  summarize(ha = mean(value, na.rm = T),
+            .groups = "drop") %>%
   dplyr::select(crop, ha)
 
 # Compare
@@ -109,10 +109,9 @@ ha_df <- ha_df %>%
     fao %>%
       filter(crop %in% crop_add) %>%
       mutate(
-        fips = unique(ha_df$adm_code[ha_df$adm_level==0]),
+        adm_code = unique(ha_df$adm_code[ha_df$adm_level==0]),
         adm_level = 0,
-        adm = unique(ha_df$adm_name[ha_df$adm_level==0])))
-
+        adm_name = unique(ha_df$adm_name[ha_df$adm_level==0])))
 
 # Calculate scaling factor
 fao_stat_sf <-bind_rows(
@@ -122,7 +121,7 @@ fao_stat_sf <-bind_rows(
     filter(adm_level == 0) %>%
     mutate(source = "ha_df")) %>%
   dplyr::select(crop, source, ha) %>%
-  spread(source, ha) %>%
+  pivot_wider(names_from = source, values_from = ha) %>%
   mutate(sf = fao/ha_df) %>%
   dplyr::select(crop, sf)
 
@@ -146,27 +145,27 @@ ggplot(data = fao_stat) +
   facet_wrap(~crop, scales = "free")
 
 
-############### FINALIZE HA ###############
+# FINALIZE HA -----------------------------------------------------------------------------
 # Consistency checks
 check_statistics(ha_df, param)
 
 # To wide format
 ha_df <- ha_df %>%
-  spread(crop, ha, fill = -999) %>%
-  arrange(adm_code, adm_name, adm_level)
+  mutate(ha = replace_na(ha, -999)) %>%
+  pivot_wider(names_from = crop, values_from = ha) %>%
+  arrange(adm_code, adm_code, adm_level)
 
 
-############### PROCESS FARMING SYSTEM SHARES ###############
+# PROCESS FARMING SYSTEM SHARES ------------------------------------------------------------
 # ci does not need to be adjusted
 fs_df <- fs_df_raw
 
-
-############### PROCESS CROPPING INTENSITY ###############
+# PROCESS CROPPING INTENSITY ---------------------------------------------------------------
 # ci does not need to be adjusted
 ci_df <- ci_df_raw
 
 
-########## SAVE ##########
+# SAVE -------------------------------------------------------------------------------------
 # Save the ha, fs and ci csv files in the Processed_data/agricultural_statistics folder
 # Note that they have to be saved in this folder using the names below so do not change this!
 write_csv(ha_df, file.path(param$spam_path, glue("processed_data/agricultural_statistics/ha_adm_{param$year}_{param$iso3c}.csv")))
@@ -174,7 +173,8 @@ write_csv(fs_df, file.path(param$spam_path, glue("processed_data/agricultural_st
 write_csv(ci_df, file.path(param$spam_path, glue("processed_data/agricultural_statistics/ci_adm_{param$year}_{param$iso3c}.csv")))
 
 
-############### NOTE ###############
+# NOTE ------------------------------------------------------------------------------------
 # As you probably created a lot of objects in he R memory, we recommend to
 # restart R at this moment and start fresh. This can be done easily in RStudio by
 # pressing CTRL/CMD + SHIFT + F10.
+

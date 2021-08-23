@@ -1,46 +1,50 @@
-#'========================================================================================================================================
-#' Project:  mapspamc_mwi
+#'========================================================================================
+#' Project:  MAPSPAMC
 #' Subject:  Script to process raw subnational statistics
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
-#'========================================================================================================================================
+#'========================================================================================
 
-############### SOURCE PARAMETERS ###############
+# SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 
-############### LOAD DATA ###############
-### LOAD DATA
-# Original data to SPAMc crop mapping
-orig2crop <- read_csv(file.path(param$raw_path, "subnational_statistics/spam_stat2crop.csv")) %>%
+# LOAD DATA ------------------------------------------------------------------------------
+# Original data to MAPSPAMC crop mapping
+orig2crop <- read_csv(file.path(param$raw_path,
+                                glue("subnational_statistics/{param$iso3c}/spam_stat2crop.csv"))) %>%
   dplyr::select(-crop_full)
 
 # raw administrative level statistics
-stat_raw <- read_csv(file.path(param$raw_path, "subnational_statistics/stat_area_all.csv"), na = c("-999", ""))
+stat_raw <- read_csv(file.path(param$raw_path,
+                               glue("subnational_statistics/{param$iso3c}/stat_area_all.csv")), na = c("-999", ""))
 
 # raw farming system and crop intensity statistics
-sy_ci_raw <- read_csv(file.path(param$raw_path, paste0("subnational_statistics/dep_list_all.csv")), na = c("-999", ""))
+sy_ci_raw <- read_csv(file.path(param$raw_path,
+                                glue("subnational_statistics/{param$iso3c}/dep_list_all.csv")), na = c("-999", ""))
 
 # link table to reaggregate administrative units into those presented in the shapefile
-link_raw <- read_csv(file.path(param$raw_path, paste0("subnational_statistics/linktable_all.csv")), na = c("-999", ""))
+link_raw <- read_csv(file.path(param$raw_path,
+                               glue("subnational_statistics/{param$iso3c}/linktable_all.csv")), na = c("-999", ""))
 
 
-########## PREPARARE STAT ##########
-#In the case of Malawi we are using raw data
-#from SPAM2010 (https://www.mapspam.info) as source. Hence there was no need to
-#collect data and aggregate crops. Alternatively we could have started with a
-#template file and use R or Excel to aggregate/split the raw statistics so they
-#fit in the template.
+# PREPARE STAT ---------------------------------------------------------------------------
+
+# For Malawi we are using raw data
+# from SPAM2010 (https://www.mapspam.info) as source. Hence there was no need to
+# collect data and aggregate crops. Alternatively we could have started with a
+# template file and use R or Excel to aggregate/split the raw statistics so they
+# fit in the template.
 
 # To create the templates use the following commands
 ha_template <- create_statistics_template("ha", param)
 fs_template <- create_statistics_template("fs", param)
 ci_template <- create_statistics_template("ci", param)
 
-
 # Remove columns that are not used
 stat <- stat_raw %>%
-  gather(crop_stat, value_ha, -stat_code, -prod_level, -name_cntr, -name_admin, -rec_type, -unit, -ar_irr, -ar_tot, -year_data, -source) %>%
+  pivot_longer(!c(stat_code, prod_level, name_cntr, name_admin, rec_type, unit, ar_irr, ar_tot, year_data, source),
+               names_to = "crop_stat", values_to = "value_ha") %>%
   dplyr::select(-source, -year_data, -stat_code, -name_cntr, -rec_type, -unit, -ar_irr, -ar_tot)
 
 # In the Malawi case the raw adm2 statistics are more detailed than the
@@ -56,7 +60,7 @@ adm1_ag <- stat %>%
   filter(prod_level %in% unique(link_adm1$prod_level)) %>%
   left_join(link_adm1) %>%
   group_by(crop_stat, o_region, o_fips1) %>%
-  summarize(value_ha = sum(value_ha, na.rm = F)) %>%
+  summarize(value_ha = sum(value_ha, na.rm = F), .groups = "drop") %>%
   rename(name_admin = o_region, prod_level = o_fips1)
 
 # Create link table for adm2
@@ -69,7 +73,7 @@ adm2_ag <- stat %>%
   filter(prod_level %in% unique(link_adm2$prod_level)) %>%
   left_join(link_adm2) %>%
   group_by(crop_stat, o_adm_name, o_fips2) %>%
-  summarize(value_ha = sum(value_ha, na.rm = F)) %>% #
+  summarize(value_ha = sum(value_ha, na.rm = F), .groups = "drop") %>% #
   rename(name_admin = o_adm_name, prod_level = o_fips2)
 
 # Combine adm0, adm1 and adm2 data
@@ -106,7 +110,7 @@ stat <- stat %>%
 stat <- stat %>%
   left_join(orig2crop) %>%
   group_by(crop, adm_code, adm_name, adm_level) %>%
-  summarize(value_ha = sum(value_ha, na.rm = F)) %>%
+  summarize(value_ha = sum(value_ha, na.rm = F), .groups = "drop") %>%
   ungroup()
 
 # Remove Area under National Administration as we also remove the polygon to
@@ -169,14 +173,16 @@ stat <- bind_rows(
 
 # Put in preferred mapspam format, adding -999 for missing values
 stat_mapspam <- stat %>%
-  spread(crop, value_ha, fill = -999) %>%
+  mutate(value_ha = replace_na(value_ha, -999)) %>%
+  pivot_wider(names_from = crop, values_from = value_ha) %>%
   arrange(adm_code, adm_code, adm_level)
 
 
-########## PROCESS SY_CI ##########
+# PROCESS SY_CI --------------------------------------------------------------------------
 # For most models we only need adm0 level but we also select adm1 in case the model needs to be run at adm1 level
 sy_ci <- sy_ci_raw %>%
-  gather(crop_stat, value, -iso3, -prod_level, -rec_type, -name_cntr, -name_admin, -rec_type, -unit, -year_data, -source) %>%
+  pivot_longer(!c(iso3, prod_level, rec_type, name_cntr, name_admin, rec_type, unit, year_data, source),
+               names_to = "crop_stat", values_to = "value") %>%
   dplyr::select(-source, -year_data, -iso3, -name_cntr) %>%
   mutate(n_char = nchar(prod_level),
          iso2 = substring(prod_level, 0, 2),
@@ -191,7 +197,7 @@ sy_ci_adm1_ag <- sy_ci %>%
   filter(adm_level == 1) %>%
   left_join(link_adm1) %>%
   group_by(crop_stat, o_region, o_fips1, rec_type, adm_level) %>%
-  summarize(value = mean(value, na.rm = T)) %>%
+  summarize(value = mean(value, na.rm = T), .groups = "drop") %>%
   rename(name_admin = o_region, prod_level = o_fips1) %>%
   ungroup()
 
@@ -227,7 +233,7 @@ sy_ci <- sy_ci %>%
   filter(!adm_name %in% "Area under National Administration")
 
 
-########## PREPARE FARMING SYSTEMS SHARE ##########
+# PREPARE FARMING SYSTEMS SHARE ----------------------------------------------------------
 # System shares
 sy <- sy_ci %>%
   filter(variable %in% c("SHIRR", "SHRFH", "SHRFS")) %>%
@@ -236,7 +242,8 @@ sy <- sy_ci %>%
   mutate(L = 100-H-I-S) %>%
   dplyr::select(crop, adm_name, adm_code, adm_level, S, H, I, L) %>%
   gather(system, share, -crop, -adm_name, -adm_code, -adm_level) %>%
-  mutate(share = share/100)
+  mutate(share = share/100) %>%
+  arrange(crop, adm_name, adm_level)
 
 # Set tea and whea to 100% irrigated in line with secondary statistics
 sy <- sy %>%
@@ -249,34 +256,39 @@ sy <- sy %>%
 
 # Wide format
 sy_mapspam <- sy %>%
-  spread(crop, share, fill = -999) %>%
+  mutate(share = replace_na(share, -999)) %>%
+  pivot_wider(names_from = crop, values_from = share) %>%
   arrange(adm_code, adm_code, adm_level)
 
 
-########## PREPARE CROPING INTENSITY ##########
+# PREPARE CROPING INTENSITY --------------------------------------------------------------
 # Cropping intensity by system
 ci <- sy_ci %>%
   filter(variable %in% c("CIIRR", "CIRFH", "CIRFL")) %>%
   rename(ci = variable) %>%
-  spread(ci, value) %>%
+  pivot_wider(names_from = ci, values_from = value) %>%
   rename(H = CIRFH, I = CIIRR, L = CIRFL) %>%
   mutate(S = L) %>%
   dplyr::select(crop, adm_name, adm_code, adm_level, S, H, I, L) %>%
-  gather(system, ci, -crop, -adm_name, -adm_code, -adm_level)
+  pivot_longer(!c(crop, adm_name, adm_code, adm_level), names_to = "system", values_to = "ci")
 
 # Wide format
 ci_mapspam <- ci %>%
-  spread(crop, ci, fill = -999) %>%
+  mutate(ci = replace_na(ci, -999)) %>%
+  pivot_wider(names_from = crop, values_from = ci) %>%
   arrange(adm_code, adm_code, adm_level)
 
 
-############### SAVE ###############
-write_csv(stat_mapspam, file.path(param$raw_path, "subnational_statistics/subnational_harvested_area_2010_MWI.csv"))
-write_csv(ci_mapspam, file.path(param$raw_path, "subnational_statistics/cropping_intensity_2010_MWI.csv"))
-write_csv(sy_mapspam, file.path(param$raw_path, "subnational_statistics/farming_system_shares_2010_MWI.csv"))
+# SAVE -----------------------------------------------------------------------------------
+write_csv(stat_mapspam, file.path(param$raw_path,
+                                  glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
+write_csv(ci_mapspam, file.path(param$raw_path,
+                                glue("subnational_statistics/{param$iso3c}/cropping_intensity_{param$year}_{param$iso3c}.csv")))
+write_csv(sy_mapspam, file.path(param$raw_path,
+                                glue("subnational_statistics/{param$iso3c}/farming_system_shares_{param$year}_{param$iso3c}.csv")))
 
 
-############### NOTE ###############
+# NOTE -----------------------------------------------------------------------------------
 # As you probably created a lot of objects in he R memory, we recommend to
 # restart R at this moment and start fresh. This can be done easily in RStudio by
 # pressing CTRL/CMD + SHIFT + F10.

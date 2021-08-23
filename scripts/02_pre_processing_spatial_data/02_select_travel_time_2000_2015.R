@@ -1,18 +1,17 @@
-#'========================================================================================================================================
-#' Project:  mapspam
+#'========================================================================================
+#'#' Project:  MAPSPAMC
 #' Subject:  Code to process travel time maps
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
-#'========================================================================================================================================
+#'========================================================================================
 
-############### SOURCE PARAMETERS ###############
+# SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 
-############### PROCESS ###############
+# PROCESS --------------------------------------------------------------------------------
 temp_path <- file.path(param$spam_path, glue("processed_data/maps/accessibility/{param$res}"))
 dir.create(temp_path, showWarnings = FALSE, recursive = TRUE)
-
 
 # Set files
 grid <- file.path(param$spam_path,
@@ -30,11 +29,11 @@ if (param$year <= 2007){
 }
 
 # Warp and mask
-output_map <- align_rasters(unaligned = input, reference = grid, dstfile = output,
+output_map <- align_rasters_fix(unaligned = input, reference = grid, dstfile = output,
                             cutline = mask, crop_to_cutline = F, srcnodata = "-9999",
-                            r = "bilinear", verbose = F, output_Raster = T, overwrite = T)
+                            r = "bilinear", overwrite = T)
 plot(output_map)
 
 
-############### CLEAN UP ###############
+# CLEAN UP -------------------------------------------------------------------------------
 rm(input, mask, output, grid, output_map, temp_path)
