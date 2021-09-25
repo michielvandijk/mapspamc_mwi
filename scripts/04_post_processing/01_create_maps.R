@@ -11,7 +11,7 @@ source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 # INSPECT RESULTS ------------------------------------------------------------------------
 view_panel("rice", var = "ha", param)
-view_stack("maiz", var = "ha", param)
+view_panel("maiz", var = "ha", param)
 
 
 # CREATE TIF -----------------------------------------------------------------------------
