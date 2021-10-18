@@ -32,27 +32,27 @@ raw_path <- "C:/Users/dijk158/OneDrive - Wageningen University & Research/data/m
 gams_path <- "C:/MyPrograms/GAMS/win64/24.6"
 
 # Set SPAMc parameters for the min_entropy_5min_adm_level_2_solve_level_0 model
-param <- spam_par(spam_path = spamc_path,
-                  raw_path = raw_path,
-                  gams_path = gams_path,
-                         iso3c = "MWI",
-                         year = 2010,
-                         res = "5min",
-                         adm_level = 2,
-                         solve_level = 0,
-                         model = "min_entropy")
+# param <- spamc_par(spamc_path = spamc_path,
+#                   raw_path = raw_path,
+#                   gams_path = gams_path,
+#                          iso3c = "MWI",
+#                          year = 2010,
+#                          res = "5min",
+#                          adm_level = 2,
+#                          solve_level = 0,
+#                          model = "min_entropy")
 
 # To run the max_score_30sec_adm_level_2_solve_level_0 model that is also described in Van Dijk et al. (2022)
 # use these settings:
-# param <- spam_par(spam_path = spamc_path,
-#                   raw_path = raw_path,
-#                   gams_path = gams_path,
-#                   iso3c = "MWI",
-#                   year = 2010,
-#                   res = "30sec",
-#                   adm_level = 2,
-#                   solve_level = 0,
-#                   model = "max_score")
+param <- spamc_par(spamc_path = spamc_path,
+                  raw_path = raw_path,
+                  gams_path = gams_path,
+                  iso3c = "MWI",
+                  year = 2010,
+                  res = "30sec",
+                  adm_level = 2,
+                  solve_level = 0,
+                  model = "max_score")
 
 
 # Show parameters

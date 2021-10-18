@@ -34,7 +34,7 @@ combine_inputs(alt_param)
 
 
 # RUN MODEL -----------------------------------------------------------------------------
-run_spam(alt_param)
+run_spamc(alt_param)
 
 
 # COMBINE ADM1 RESULTS ------------------------------------------------------------------

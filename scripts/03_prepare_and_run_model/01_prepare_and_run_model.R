@@ -16,7 +16,7 @@ prepare_physical_area(param)
 # CREATE SYNERGY CROPLAND INPUT ----------------------------------------------------------
 prepare_cropland(param)
 
-
+pre
 # PROCESS --------------------------------------------------------------------------------
 prepare_irrigated_area(param)
 
@@ -34,7 +34,7 @@ combine_inputs(param)
 
 
 # RUN MODEL -----------------------------------------------------------------------------
-run_spam(param)
+run_spamc(param)
 
 
 # COMBINE ADM1 RESULTS ------------------------------------------------------------------

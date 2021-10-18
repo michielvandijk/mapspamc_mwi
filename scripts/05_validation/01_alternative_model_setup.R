@@ -16,7 +16,7 @@ source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 # SETUP ALTERNATIVE MODEL ----------------------------------------------------------------
 # In the case for Malawi we run an adm_level = 1 model
-alt_param <- spam_par(spam_path = spamc_path,
+alt_param <- spamc_par(spamc_path = spamc_path,
                       raw_path = raw_path,
                       gams_path = gams_path,
                       iso3c = "MWI",
@@ -28,7 +28,7 @@ alt_param <- spam_par(spam_path = spamc_path,
 
 # To validate the max_score_30sec_adm_level_2_solve_level_0 model that is also described
 # in Van Dijk et al. (2022) select the correct parameters in 01_model_setup.R and use these settings:
-# alt_param <- spam_par(spam_path = spamc_path,
+# alt_param <- spamc_par(spamc_path = spamc_path,
 #                   raw_path = raw_path,
 #                   gams_path = gams_path,
 #                   iso3c = "MWI",
@@ -40,3 +40,4 @@ alt_param <- spam_par(spam_path = spamc_path,
 
 # Show parameters
 print(alt_param)
+

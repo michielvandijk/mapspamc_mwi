@@ -48,13 +48,13 @@ bind_rows(ha, results_alt_ag)  %>%
 # COMPARE MODEL WITH STATISTICS -----------------------------------------------------------------
 # Another type of model validation is to compare the subnational statistics with the preferred model,
 # i.e. the model, which uses the most detailed subnational information as input as set by the
-# adm_level parameter in param. The result should be near perfect correlation as the model as the
-# model uses the subnational data as a constraint to allocate crops. Slight deviations are the result
-# of slack, which is added to the model to allow for some flexibility and prevents the model from
-# becoming infeasible (see package documentation).
+# adm_level parameter in param. The result should be near perfect correlation as the model uses the
+# subnational data as a constraint to allocate crops. Slight deviations are the result of slack,
+# which is added to the model to allow for some flexibility and prevents the model from becoming
+# infeasible (see package documentation).
 
 # Aggregate gridded output to adm level of model specified by param
-results_alt_ag <- aggregate_to_adm(param, alt_param) %>%
+results_ag <- aggregate_to_adm(param, param) %>%
   mutate(source = "model")
 
 # Prepare statistics
@@ -70,7 +70,7 @@ ha <- ha %>%
 # Statistics are created with the ggpubr package. Absolute positioning is used to place the
 # labels and likely need to be set for each model. We use logs to account for very large and
 # small values
-bind_rows(ha, results_alt_ag)  %>%
+bind_rows(ha, results_ag)  %>%
   pivot_wider(names_from = source, values_from = value) %>%
   na.omit() %>%
   ggplot(aes(x = log(model+1), y = log(statistics+1), color = crop)) +
