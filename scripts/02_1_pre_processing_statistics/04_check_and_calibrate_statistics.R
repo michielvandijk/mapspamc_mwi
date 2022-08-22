@@ -1,6 +1,6 @@
 #'========================================================================================
-#' Project:  MAPSPAMC
-#' Subject:  Process adm shapefile
+#' Project:  mapspamc
+#' Subject:  Check and calibrate statistics
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
 #'========================================================================================
@@ -11,22 +11,22 @@ source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 # LOAD DATA ------------------------------------------------------------------------------
 # harvest area statistics
-ha_df_raw <- read_csv(file.path(param$raw_path,
-  glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
+ha_df_raw <- read_csv(file.path(param$db_path,
+  glue("subnational_statistics/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
 
 # Farming systems shares
-fs_df_raw <- read_csv(file.path(param$raw_path,
-  glue("subnational_statistics/{param$iso3c}/farming_system_shares_{param$year}_{param$iso3c}.csv")))
+fs_df_raw <- read_csv(file.path(param$db_path,
+  glue("subnational_statistics/farming_system_shares_{param$year}_{param$iso3c}.csv")))
 
 # Cropping intensity
-ci_df_raw <- read_csv(file.path(param$raw_path,
-  glue("subnational_statistics/{param$iso3c}/cropping_intensity_{param$year}_{param$iso3c}.csv")))
+ci_df_raw <- read_csv(file.path(param$db_path,
+  glue("subnational_statistics/cropping_intensity_{param$year}_{param$iso3c}.csv")))
 
 # adm_list
 load_data("adm_list", param)
 
 # faostat
-fao_raw <- read_csv(file.path(param$spam_path,
+fao_raw <- read_csv(file.path(param$model_path,
   glue("processed_data/agricultural_statistics/faostat_crops_{param$year}_{param$iso3c}.csv")))
 
 
@@ -68,6 +68,7 @@ ha_df <- reaggregate_statistics(ha_df, param)
 
 # Check again
 check_statistics(ha_df, param, out = T)
+
 
 # HARMONIZE HA WITH FAOSTAT -------------------------------------------------------------
 # Compare with FAO
@@ -160,6 +161,7 @@ ha_df <- ha_df %>%
 # ci does not need to be adjusted
 fs_df <- fs_df_raw
 
+
 # PROCESS CROPPING INTENSITY ---------------------------------------------------------------
 # ci does not need to be adjusted
 ci_df <- ci_df_raw
@@ -168,9 +170,9 @@ ci_df <- ci_df_raw
 # SAVE -------------------------------------------------------------------------------------
 # Save the ha, fs and ci csv files in the Processed_data/agricultural_statistics folder
 # Note that they have to be saved in this folder using the names below so do not change this!
-write_csv(ha_df, file.path(param$spam_path, glue("processed_data/agricultural_statistics/ha_adm_{param$year}_{param$iso3c}.csv")))
-write_csv(fs_df, file.path(param$spam_path, glue("processed_data/agricultural_statistics/fs_adm_{param$year}_{param$iso3c}.csv")))
-write_csv(ci_df, file.path(param$spam_path, glue("processed_data/agricultural_statistics/ci_adm_{param$year}_{param$iso3c}.csv")))
+write_csv(ha_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/ha_adm_{param$year}_{param$iso3c}.csv")))
+write_csv(fs_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/fs_adm_{param$year}_{param$iso3c}.csv")))
+write_csv(ci_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/ci_adm_{param$year}_{param$iso3c}.csv")))
 
 
 # NOTE ------------------------------------------------------------------------------------

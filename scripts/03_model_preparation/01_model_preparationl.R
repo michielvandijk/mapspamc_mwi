@@ -1,44 +1,35 @@
 #'========================================================================================
-#' Project:  MAPSPAMC
-#' Subject:  Script to run validation model
+#' Project:  mapspamc
+#' Subject:  Script to prepare model input data
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/05_validation/01_alternative_model_setup.r"))
+source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
 
 # PREPARE PHYSICAL AREA ------------------------------------------------------------------
-prepare_physical_area(alt_param)
+prepare_physical_area(param)
 
 
 # CREATE SYNERGY CROPLAND INPUT ----------------------------------------------------------
-prepare_cropland(alt_param)
+prepare_cropland(param)
 
 
 # PROCESS --------------------------------------------------------------------------------
-prepare_irrigated_area(alt_param)
+prepare_irrigated_area(param)
 
 
 # HARMONIZE INPUT DATA -------------------------------------------------------------------
-harmonize_inputs(alt_param)
+harmonize_inputs(param)
 
 
 # PREPARE SCORE --------------------------------------------------------------------------
-prepare_priors_and_scores(alt_param)
+prepare_priors_and_scores(param)
 
 
 # COMBINE MODEL INPUTS -------------------------------------------------------------------
-combine_inputs(alt_param)
-
-
-# RUN MODEL -----------------------------------------------------------------------------
-run_spamc(alt_param)
-
-
-# COMBINE ADM1 RESULTS ------------------------------------------------------------------
-combine_results(alt_param)
-
+combine_inputs(param)
 
 

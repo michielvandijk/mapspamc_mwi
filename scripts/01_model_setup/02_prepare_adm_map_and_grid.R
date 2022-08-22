@@ -1,6 +1,6 @@
 #'========================================================================================
-#' Project:  MAPSPAMC
-#' Subject:  Process adm shapefile
+#' Project:  mapspamc
+#' Subject:  Prepare adm map and grid
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
 #'========================================================================================
@@ -14,7 +14,7 @@ source(here::here("scripts/01_model_setup/01_model_setup.r"))
 iso3c_shp <- "adm_2010_MWI.shp"
 
 # load shapefile
-adm_map_raw <- read_sf(file.path(param$raw_path, glue("adm/{param$iso3c}/{iso3c_shp}")))
+adm_map_raw <- read_sf(file.path(param$db_path, glue("adm/{iso3c_shp}")))
 
 # plot
 plot(adm_map_raw$geometry)
@@ -29,13 +29,16 @@ adm_map <- adm_map_raw %>%
 head(adm_map)
 names(adm_map)
 
-# Change names In order to use the country polygon as input, the column names of
-# the attribute table have to be set.
+# In order to use the country polygon as input, the column names of the attribute table need to have
+# the right names referring to the different adms, which correspond to the names in the crop statistics.
 # The names of the administrative units should be set to admX_name, where X is the adm level.
 # The codes of the administrative units should be set to admX_code, where X is the adm code.
 
-# Set the original names, i.e. the ones that will be replaced. Remove adm1
-# and/or adm2 entries if such data is not available.
+# If the attribute table already contains all adm names and codes but with incorrect header names,
+# set the original names, i.e. the ones that will be replaced, below.
+# Add adm0_code and adm0_name of these are not not part of attribute table
+# e.g. %>% mutate(adm0_name  = "COUNTRY.NAME)
+
 adm0_name_orig <- "ADM0_NAME"
 adm0_code_orig <- "FIPS0"
 adm1_name_orig <- "ADM1_NAME"
@@ -72,7 +75,7 @@ par(mfrow=c(1,2))
 plot(adm_map$geometry, main = "ADM all polygons")
 
 # Set names of ADMs that need to be removed from the polygon.
-# These are ADMs where no crop should be allocated. Here we remove
+# These are ADMs where no crops should be allocated. Here we remove
 # Area under National Administration, which is the part of Lake Malawi that belongs to Malawi
 # and Likoma, several small islands in the lake that are not covered by the statistics.
 # Set the adm_name by ADM level which need to be removed. Otherwise remove the script.
@@ -92,7 +95,7 @@ create_adm_list(adm_map, param)
 
 
 # SAVE -----------------------------------------------------------------------------------
-temp_path <- file.path(param$spam_path, glue("processed_data/maps/adm/{param$res}"))
+temp_path <- file.path(param$model_path, glue("processed_data/maps/adm/{param$res}"))
 dir.create(temp_path, showWarnings = FALSE, recursive = TRUE)
 
 saveRDS(adm_map, file.path(temp_path, glue("adm_map_{param$year}_{param$iso3c}.rds")))

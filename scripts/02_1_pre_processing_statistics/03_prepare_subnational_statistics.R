@@ -1,5 +1,5 @@
 #'========================================================================================
-#' Project:  MAPSPAMC
+#' Project:  mapspamc
 #' Subject:  Script to process raw subnational statistics
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
@@ -8,24 +8,33 @@
 # SOURCE PARAMETERS ----------------------------------------------------------------------
 source(here::here("scripts/01_model_setup/01_model_setup.r"))
 
+# In this script the raw subnational statistics are processed. In order to prevent errors
+# when running the model, it is essential to put the statistics in the right
+# format and make sure they are consistent (e.g. total area at national level is equal to
+# that of subnational area).
+
+# The user can prepare the data in Excel or use R. mapspamc offers a function to create a
+# template for the data. It also providers several support functions to check for consistency
+# and modify where needed. See the package documentation for more information.
+
 
 # LOAD DATA ------------------------------------------------------------------------------
-# Original data to MAPSPAMC crop mapping
-orig2crop <- read_csv(file.path(param$raw_path,
-                                glue("subnational_statistics/{param$iso3c}/spam_stat2crop.csv"))) %>%
+# Original data to mapspamc crop mapping
+orig2crop <- read_csv(file.path(param$db_path,
+                                glue("subnational_statistics/spam_stat2crop.csv"))) %>%
   dplyr::select(-crop_full)
 
 # raw administrative level statistics
-stat_raw <- read_csv(file.path(param$raw_path,
-                               glue("subnational_statistics/{param$iso3c}/stat_area_all.csv")), na = c("-999", ""))
+stat_raw <- read_csv(file.path(param$db_path,
+                               glue("subnational_statistics/stat_area_all.csv")), na = c("-999", ""))
 
 # raw farming system and crop intensity statistics
-sy_ci_raw <- read_csv(file.path(param$raw_path,
-                                glue("subnational_statistics/{param$iso3c}/dep_list_all.csv")), na = c("-999", ""))
+sy_ci_raw <- read_csv(file.path(param$db_path,
+                                glue("subnational_statistics/dep_list_all.csv")), na = c("-999", ""))
 
 # link table to reaggregate administrative units into those presented in the shapefile
-link_raw <- read_csv(file.path(param$raw_path,
-                               glue("subnational_statistics/{param$iso3c}/linktable_all.csv")), na = c("-999", ""))
+link_raw <- read_csv(file.path(param$db_path,
+                               glue("subnational_statistics/linktable_all.csv")), na = c("-999", ""))
 
 
 # PREPARE STAT ---------------------------------------------------------------------------
@@ -35,11 +44,6 @@ link_raw <- read_csv(file.path(param$raw_path,
 # collect data and aggregate crops. Alternatively we could have started with a
 # template file and use R or Excel to aggregate/split the raw statistics so they
 # fit in the template.
-
-# To create the templates use the following commands
-ha_template <- create_statistics_template("ha", param)
-fs_template <- create_statistics_template("fs", param)
-ci_template <- create_statistics_template("ci", param)
 
 # Remove columns that are not used
 stat <- stat_raw %>%
@@ -280,15 +284,16 @@ ci_mapspam <- ci %>%
 
 
 # SAVE -----------------------------------------------------------------------------------
-write_csv(stat_mapspam, file.path(param$raw_path,
-                                  glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
-write_csv(ci_mapspam, file.path(param$raw_path,
-                                glue("subnational_statistics/{param$iso3c}/cropping_intensity_{param$year}_{param$iso3c}.csv")))
-write_csv(sy_mapspam, file.path(param$raw_path,
-                                glue("subnational_statistics/{param$iso3c}/farming_system_shares_{param$year}_{param$iso3c}.csv")))
+write_csv(stat_mapspam, file.path(param$db_path,
+                                  glue("subnational_statistics/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
+write_csv(ci_mapspam, file.path(param$db_path,
+                                glue("subnational_statistics/cropping_intensity_{param$year}_{param$iso3c}.csv")))
+write_csv(sy_mapspam, file.path(param$db_path,
+                                glue("subnational_statistics/farming_system_shares_{param$year}_{param$iso3c}.csv")))
 
 
 # NOTE -----------------------------------------------------------------------------------
 # As you probably created a lot of objects in he R memory, we recommend to
 # restart R at this moment and start fresh. This can be done easily in RStudio by
 # pressing CTRL/CMD + SHIFT + F10.
+
