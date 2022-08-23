@@ -1,6 +1,6 @@
 # ========================================================================================
-# Project:  MAPSPAMC_MWI
-# Subject:  Script clip Malawi adm maps from global map
+# Project:  mapspamc
+# Subject:  Script clip Malawi adm maps from global SPAM map
 # Author:   Michiel van Dijk
 # Contact:  michiel.vandijk@wur.nl
 # ========================================================================================
