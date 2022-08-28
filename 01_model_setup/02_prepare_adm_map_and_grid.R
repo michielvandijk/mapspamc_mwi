@@ -6,7 +6,7 @@
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # LOAD DATA ------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ source(here::here("scripts/01_model_setup/01_model_setup.r"))
 iso3c_shp <- "adm_2010_MWI.shp"
 
 # load shapefile
-adm_map_raw <- read_sf(file.path(param$db_path, glue("adm/{iso3c_shp}")))
+adm_map_raw <- read_sf(file.path(param$db_path, glue("adm/{param$iso3c}/{iso3c_shp}")))
 
 # plot
 plot(adm_map_raw$geometry)

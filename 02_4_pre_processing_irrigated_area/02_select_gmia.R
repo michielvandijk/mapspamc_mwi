@@ -6,7 +6,7 @@
 #'========================================================================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # LOAD DATA ------------------------------------------------------------------------------
@@ -29,9 +29,9 @@ if(param$res == "5min") {
 
   # save
   writeRaster(output, file.path(param$model_path,
-                                glue("processed_data/maps/irrigated_area/{param$res}/gmia_{param$res}_{param$year}_{param$iso3c}.tif")),
-              overwrite = T)
-}
+                                   glue("processed_data/maps/irrigated_area/{param$res}/gmia_{param$res}_{param$year}_{param$iso3c}.tif")),
+  overwrite = T)
+  }
 
 if(param$res == "30sec") {
 

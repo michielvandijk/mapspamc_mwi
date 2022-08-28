@@ -6,10 +6,10 @@
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
-
+source(here::here("01_model_setup/01_model_setup.r"))
 
 # LOAD DATA ------------------------------------------------------------------------------
+
 # Crop production
 prod <- read_csv(file.path(param$db_path, "faostat/Production_Crops_Livestock_E_All_Data_(Normalized).csv"))
 

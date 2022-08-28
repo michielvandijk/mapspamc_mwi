@@ -6,7 +6,7 @@
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # RUN MODEL -----------------------------------------------------------------------------
@@ -21,5 +21,3 @@ combine_results(param)
 # INSPECT RESULTS ------------------------------------------------------------------------
 view_results("rice", var = "ha", param)
 view_results("maiz", var = "ha", param)
-
-

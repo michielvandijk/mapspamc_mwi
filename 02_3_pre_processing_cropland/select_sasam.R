@@ -1,12 +1,12 @@
 #'========================================================================================
-#' Project:  mapspamcC
+#' Project:  mapspamc
 #' Subject:  Code process SASAM global synergy cropland map
 #' Author:   Michiel van Dijk
 #' Contact:  michiel.vandijk@wur.nl
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # LOAD DATA ------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ r_area <- cellSize(grid, unit = "ha")
 output <- output * r_area
 plot(output)
 writeRaster(output, file.path(temp_path,
-                                  glue("cl_mean_{param$res}_{param$year}_{param$iso3c}.tif")),
+                              glue("cl_mean_{param$res}_{param$year}_{param$iso3c}.tif")),
             overwrite = T)
 
 # clean up

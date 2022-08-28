@@ -5,9 +5,8 @@
 #' Contact:  michiel.vandijk@wur.nl
 #'========================================================================================================================================
 
-
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # LOAD DATA ------------------------------------------------------------------------------
@@ -74,7 +73,7 @@ writeRaster(ir_max_map, file.path(temp_path,
                                   glue::glue("ia_max_{param$res}_{param$year}_{param$iso3c}.tif")),overwrite = T)
 
 writeRaster(ir_rank_map, file.path(temp_path,
-                                   glue::glue("ia_rank_{param$res}_{param$year}_{param$iso3c}.tif")),overwrite = T)
+                                  glue::glue("ia_rank_{param$res}_{param$year}_{param$iso3c}.tif")),overwrite = T)
 
 # CLEAN UP -------------------------------------------------------------------------------
 rm(adm_map, gia, gmia, grid, grid_df, grid_size, ir_df, ir_max_map, ir_rank_map, temp_path)

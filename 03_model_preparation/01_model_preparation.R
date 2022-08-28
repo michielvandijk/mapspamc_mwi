@@ -6,7 +6,7 @@
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # PREPARE PHYSICAL AREA ------------------------------------------------------------------
@@ -31,5 +31,4 @@ prepare_priors_and_scores(param)
 
 # COMBINE MODEL INPUTS -------------------------------------------------------------------
 combine_inputs(param)
-
 

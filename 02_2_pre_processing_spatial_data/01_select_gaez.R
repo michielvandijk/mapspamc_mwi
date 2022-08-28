@@ -6,7 +6,7 @@
 #'========================================================================================
 
 # SOURCE PARAMETERS ----------------------------------------------------------------------
-source(here::here("scripts/01_model_setup/01_model_setup.r"))
+source(here::here("01_model_setup/01_model_setup.r"))
 
 
 # LOAD DATA ------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ clip_gaez <- function(file_name, folder, method = "bilinear"){
   dir.create(temp_path, showWarnings = FALSE, recursive = TRUE)
   output <- align_raster(file_name, grid, adm_map, method = method)
   writeRaster(output, file.path(temp_path,
-                                glue("{id}_{param$res}_{param$year}_{param$iso3c}.tif")), overwrite = TRUE)
+                      glue("{id}_{param$res}_{param$year}_{param$iso3c}.tif")), overwrite = TRUE)
 }
 
 # Clip potential yield files
