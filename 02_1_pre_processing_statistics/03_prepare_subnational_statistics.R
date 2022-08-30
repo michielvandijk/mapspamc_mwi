@@ -17,6 +17,9 @@ source(here::here("01_model_setup/01_model_setup.r"))
 # template for the data. It also providers several support functions to check for consistency
 # and modify where needed. See the package documentation for more information.
 
+# In this case, subnational statistics were taken from SPAM2010 and slightly modified so
+# there was no need to process raw subnational statistics
+
 
 # LOAD DATA ------------------------------------------------------------------------------
 
