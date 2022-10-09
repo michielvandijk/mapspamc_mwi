@@ -34,7 +34,12 @@ combine_inputs(alt_param)
 
 
 # RUN MODEL -----------------------------------------------------------------------------
-run_mapspamc(alt_param)
+if(param$model == "min_entropy"){
+  run_mapspamc(param, solver = "IPOPT")
+} else {
+  run_mapspamc(param, solver = "CPLEX")
+}
+toc()
 
 
 # COMBINE ADM1 RESULTS ------------------------------------------------------------------
