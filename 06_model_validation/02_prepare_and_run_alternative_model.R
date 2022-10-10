@@ -34,10 +34,10 @@ combine_inputs(alt_param)
 
 
 # RUN MODEL -----------------------------------------------------------------------------
-if(param$model == "min_entropy"){
-  run_mapspamc(param, solver = "IPOPT")
+if(alt_param$model == "min_entropy"){
+  run_mapspamc(alt_param, solver = "IPOPT")
 } else {
-  run_mapspamc(param, solver = "CPLEX")
+  run_mapspamc(alt_param, solver = "CPLEX")
 }
 toc()
 
