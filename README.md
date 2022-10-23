@@ -7,12 +7,13 @@ This repository contains the scripts to create crop distribution maps
 with the [`mapspamc`](https://github.com/michielvandijk/mapspamc) R
 package for Malawi, covering the year 2010. To run the scripts, the user
 needs to install `mapspamc` and download the [mapspamc
-database](ADD%20link), which includes all the required input data,
-including subnational crop statistics for Malawi as well as global maps.
-Note that the (subnational) statistics were modified for illustrative
-purposes and therefore results might differ from those presented in
-SPAM2010 (Yu et al. 2020). Please use the original SPAM product when
-presenting crop distribution maps for Malawi.
+database](https://doi.org/10.5281/zenodo.7031917), which includes all
+the required input data, including subnational crop statistics for
+Malawi as well as global maps. Note that the (subnational) statistics
+were modified for illustrative purposes and therefore results might
+differ from those presented in SPAM2010 (Yu et al. 2020). Please use the
+original SPAM database when presenting crop distribution maps for
+Malawi.
 
 Detailed information on how to install the package and run the Malawi
 case-study is provided in the articles of the `mapspamc` package website
