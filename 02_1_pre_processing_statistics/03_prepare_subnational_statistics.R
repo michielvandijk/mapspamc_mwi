@@ -28,7 +28,7 @@ source(here::here("01_model_setup/01_model_setup.r"))
 
 # To create the templates use the following commands
 ha_stat <- create_statistics_template("ha", param)
-fs_stat <- create_statistics_template("fs", param)
+ps_stat <- create_statistics_template("ps", param)
 ci_stat <- create_statistics_template("ci", param)
 
 
@@ -37,8 +37,8 @@ write_csv(ha_stat, file.path(param$db_path,
   glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_template_{param$year}_{param$iso3c}.csv")))
 write_csv(ci_stat, file.path(param$db_path,
   glue("subnational_statistics/{param$iso3c}/cropping_intensity_template_{param$year}_{param$iso3c}.csv")))
-write_csv(fs_stat, file.path(param$db_path,
-  glue("subnational_statistics/{param$iso3c}/farming_system_shares_template_{param$year}_{param$iso3c}.csv")))
+write_csv(ps_stat, file.path(param$db_path,
+  glue("subnational_statistics/{param$iso3c}/production_system_shares_template_{param$year}_{param$iso3c}.csv")))
 
 
 # CLEAN UP -------------------------------------------------------------------------------

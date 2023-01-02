@@ -14,7 +14,7 @@ ha_df_raw <- read_csv(file.path(param$db_path,
   glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
 
 # Farming systems shares
-fs_df_raw <- read_csv(file.path(param$db_path,
+ps_df_raw <- read_csv(file.path(param$db_path,
   glue("subnational_statistics/{param$iso3c}/farming_system_shares_{param$year}_{param$iso3c}.csv")))
 
 # Cropping intensity
@@ -165,7 +165,7 @@ ha_df <- ha_df %>%
 
 # PROCESS FARMING SYSTEM SHARES ------------------------------------------------------------
 # ci does not need to be adjusted
-fs_df <- fs_df_raw
+ps_df <- ps_df_raw
 
 # PROCESS CROPPING INTENSITY ---------------------------------------------------------------
 # ci does not need to be adjusted
@@ -173,16 +173,16 @@ ci_df <- ci_df_raw
 
 
 # SAVE -------------------------------------------------------------------------------------
-# Save the ha, fs and ci csv files in the Processed_data/agricultural_statistics folder
+# Save the ha, ps and ci csv files in the Processed_data/agricultural_statistics folder
 # Note that they have to be saved in this folder using the names below so do not change this!
 write_csv(ha_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/ha_adm_{param$year}_{param$iso3c}.csv")))
-write_csv(fs_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/fs_adm_{param$year}_{param$iso3c}.csv")))
+write_csv(ps_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/ps_adm_{param$year}_{param$iso3c}.csv")))
 write_csv(ci_df, file.path(param$model_path, glue("processed_data/agricultural_statistics/ci_adm_{param$year}_{param$iso3c}.csv")))
 
 
 # CLEAN UP -------------------------------------------------------------------------------
 rm(adm_list, check, ci_df, ci_df_raw, crop_na_0, fao, fao_ha, fao_raw, fao_stat, fao_stat_sf,
-   fs_df, fs_df_raw, ha_df, ha_df_raw, crop_add, crop_rem)
+   ps_df, ps_df_raw, ha_df, ha_df_raw, crop_add, crop_rem)
 
 # NOTE ------------------------------------------------------------------------------------
 # As you probably created a lot of objects in he R memory, we recommend to
