@@ -31,8 +31,7 @@ options(digits=4) # limit display to four digits
 # Creates a model folder structure in c:/temp/ with the name 'mapspamc_mwi'.
 # the user can replace mwi with the country code of the case-study country or
 # choose a new name
-model_path <- "C:/Users/dijk158/OneDrive - Wageningen University & Research/data/mapspamc_iso3c/mapspamc_mwi"
-#model_path <- "c:/temp/mapspamc_mwi"
+model_path <- "c:/temp/mapspamc_mwi"
 
 # Creates a database folder with the name mapspamc_db in c:/temp
 db_path <- "c:/temp"

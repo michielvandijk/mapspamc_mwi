@@ -15,7 +15,7 @@ ha_df_raw <- read_csv(file.path(param$db_path,
 
 # Farming systems shares
 ps_df_raw <- read_csv(file.path(param$db_path,
-  glue("subnational_statistics/{param$iso3c}/farming_system_shares_{param$year}_{param$iso3c}.csv")))
+  glue("subnational_statistics/{param$iso3c}/production_system_shares_{param$year}_{param$iso3c}.csv")))
 
 # Cropping intensity
 ci_df_raw <- read_csv(file.path(param$db_path,
