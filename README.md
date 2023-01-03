@@ -15,24 +15,32 @@ differ from those presented in SPAM2010 (Yu et al. 2020). Please use the
 original SPAM database when presenting crop distribution maps for
 Malawi.
 
-Detailed information on how to install the package and run the Malawi
-case-study is provided in the articles of the `mapspamc` package website
-(<https://michielvandijk.github.io/mapspamc/>). Additional information
-is available in a scientific journal article (Dijk et al. 2022). Please
-cite this article if you use the `mapspamc`package.
+Detailed information on how to install the package and run the Ethiopia
+case-study is provided in the articles of the `mapspamc` [package
+website](https://michielvandijk.github.io/mapspamc/).
+
+<!-- Additional information is available in a scientific journal article [@VanDijk2022b]. Please cite this article if you use the `mapspamc`package. -->
+
+Note that it takes up to several hours to run the models, in particular
+when a resolution of 30 arc seconds is selected. The table below
+presents the model dimensions and model running time using a machine
+with an Intel(R) Xeon(R) E-2276M CPU @ 2.81 GHz processor and 32 GB RAM.
+
+|                                              | Cross-entropy       | Fitness score       |
+|----------------------------------------------|---------------------|---------------------|
+| Resolution                                   | 5 arc minutes       | 30 arc seconds      |
+| Solve level                                  | 0                   | 0                   |
+| Number of crops                              | 29                  | 29                  |
+| Number of production systems x crops         | 66                  | 66                  |
+| Number of administrative units               | 3 (ADM1), 27 (ADM2) | 3 (ADM1), 27 (ADM2) |
+| Number of crops with subnational information | 19                  | 19                  |
+| Number of cropland cells                     | 1,104               | 104,965             |
+| Running time                                 | 271 sec             | 5,610 sec           |
+| Solver                                       | IPOPT               | CPLEX               |
 
 ## References
 
 <div id="refs" class="references csl-bib-body hanging-indent">
-
-<div id="ref-VanDijk2022b" class="csl-entry">
-
-Dijk, Michiel van, Ulrike Wood-Sichra, Yating Ru, Amanda Palazzo, Petr
-Havlik, and Liangzhi You. 2022. “<span class="nocase">Generating
-multi-period crop distribution maps for Southern Africa using a data
-fusion approach</span>.”
-
-</div>
 
 <div id="ref-Yu2020" class="csl-entry">
 
