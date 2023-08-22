@@ -13,7 +13,7 @@ source(here::here("01_model_setup/01_model_setup.r"))
 ha_df_raw <- read_csv(file.path(param$db_path,
   glue("subnational_statistics/{param$iso3c}/subnational_harvested_area_{param$year}_{param$iso3c}.csv")))
 
-# Farming systems shares
+# Production system shares
 ps_df_raw <- read_csv(file.path(param$db_path,
   glue("subnational_statistics/{param$iso3c}/production_system_shares_{param$year}_{param$iso3c}.csv")))
 
