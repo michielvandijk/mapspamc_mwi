@@ -22,7 +22,7 @@ prepare_irrigated_area(param)
 
 
 # HARMONIZE INPUT DATA -------------------------------------------------------------------
-harmonize_inputs(param)
+harmonize_inputs(param, cl_slackn = 1000, cl_slackp = 0.05)
 
 
 # PREPARE SCORE --------------------------------------------------------------------------
