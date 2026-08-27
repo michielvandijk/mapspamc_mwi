@@ -20,8 +20,8 @@ website](https://michielvandijk.github.io/mapspamc/).
 Note that it takes up to several hours to run the models, in particular
 when a resolution of 30 arc seconds is selected. The table below
 presents the model dimensions and model running time using a machine
-with an Intel(R) Xeon(R) E-2276M CPU @ 2.81 GHz processor and 32 GB RAM,
-GAMS Distribution 49.3.0 and R version 4.5.1.
+with an AMD Ryzen 7 PRO 7840U w/ Radeon 780M Graphics 3.30 GHz processor
+and 64 GB RAM, GAMS Distribution 49.3.0 and R version 4.5.1.
 
 |  | Cross-entropy | Fitness score |
 |----|----|----|
@@ -32,7 +32,7 @@ GAMS Distribution 49.3.0 and R version 4.5.1.
 | Number of administrative units | 3 (ADM1), 27 (ADM2) | 3 (ADM1), 27 (ADM2) |
 | Number of crops with subnational information | 19 | 19 |
 | Number of cropland cells | 1,104 | 104,965 |
-| Running time | 271 sec | 5,610 sec |
+| Running time | 47 sec | 1,660 sec |
 | Solver | IPOPT | CPLEX |
 
 ## References
